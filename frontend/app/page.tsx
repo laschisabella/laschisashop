@@ -1,41 +1,121 @@
 "use client";
 
+import { useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
+import { useUsers } from "@/hooks/useUsers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Product } from "@/types/product";
+import { Input } from "@/components/ui/input";
 
 export default function HomePage() {
   const { list } = useProducts();
+  const { list: userList, update } = useUsers();
+  const [authUser, setAuthUser] = useState<any | null>(null);
 
-  if (list.isLoading) return <p>Carregando produtos...</p>;
+  const [loginForm, setLoginForm] = useState({
+    username: "",
+    password: "",
+  });
+
+  const [editForm, setEditForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  if (list.isLoading || userList.isLoading) return <p>Carregando...</p>;
   if (!list.data) return <p>Nenhum produto encontrado</p>;
 
-  // Filtra apenas produtos ativos
   const activeProducts = list.data.filter((product: Product) => product.active);
+
+  const handleLogin = () => {
+    const user = userList.data?.find(
+      (u: any) =>
+        u.username === loginForm.username && u.password === loginForm.password
+    );
+    if (user) {
+      setAuthUser(user);
+      setEditForm({ email: user.email, password: user.password });
+    } else {
+      alert("Usuário ou senha inválidos");
+    }
+  };
+
+  const handleLogout = () => {
+    setAuthUser(null);
+    setLoginForm({ username: "", password: "" });
+  };
+
+  const handleUpdateProfile = () => {
+    if (!authUser) return;
+    update.mutate(
+      {
+        id: authUser.id,
+        data: { email: editForm.email, password: editForm.password },
+      },
+      {
+        onSuccess: (updatedUser) => {
+          setAuthUser(updatedUser);
+          alert("Perfil atualizado com sucesso!");
+        },
+      }
+    );
+  };
 
   return (
     <div className="flex h-screen">
       {/* Sidebar de perfil */}
       <aside className="w-64 bg-gray-100 p-6 border-r flex-shrink-0">
-        <div className="space-y-4 sticky top-0">
-          <h2 className="text-xl font-bold">Perfil do Cliente</h2>
-          <div className="space-y-2">
-            <p>
-              <strong>Nome:</strong> João Silva
-            </p>
-            <p>
-              <strong>Email:</strong> joao.silva@email.com
-            </p>
-            <p>
-              <strong>Telefone:</strong> (11) 99999-9999
-            </p>
+        {!authUser ? (
+          <div className="space-y-3">
+            <h2 className="text-lg font-semibold">Login</h2>
+            <Input
+              placeholder="Username"
+              value={loginForm.username}
+              onChange={(e) =>
+                setLoginForm({ ...loginForm, username: e.target.value })
+              }
+            />
+            <Input
+              placeholder="Password"
+              type="password"
+              value={loginForm.password}
+              onChange={(e) =>
+                setLoginForm({ ...loginForm, password: e.target.value })
+              }
+            />
+            <Button onClick={handleLogin}>Entrar</Button>
           </div>
-          <Button>Editar Perfil</Button>
-        </div>
+        ) : (
+          <div className="space-y-3">
+            <h2 className="text-lg font-semibold">Meu Perfil</h2>
+            <p>
+              <strong>Username:</strong> {authUser.username}
+            </p>
+            <Input
+              placeholder="Email"
+              value={editForm.email}
+              onChange={(e) =>
+                setEditForm({ ...editForm, email: e.target.value })
+              }
+            />
+            <Input
+              placeholder="Senha"
+              type="password"
+              value={editForm.password}
+              onChange={(e) =>
+                setEditForm({ ...editForm, password: e.target.value })
+              }
+            />
+            <Button onClick={handleUpdateProfile}>Atualizar Perfil</Button>
+            <Button variant="destructive" onClick={handleLogout}>
+              Logout
+            </Button>
+          </div>
+        )}
       </aside>
 
-      {/* Lista de produtos com scroll independente */}
+      {/* Lista de produtos */}
       <main className="flex-1 p-6 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {activeProducts.map((product: Product) => (
           <Card key={product.id} className="flex flex-col">
