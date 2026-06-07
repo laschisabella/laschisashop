@@ -15,7 +15,7 @@ export function useUsers() {
   });
 
   const update = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: number; data: any }) =>
       UsersService.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
   });

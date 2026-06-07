@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
-  Body,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, } from '@nestjs/common';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -27,19 +19,19 @@ export class ProductsController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const product = await this.service.findOne(id);
+    const product = await this.service.findOne(parseInt(id));
     return { ok: true, product };
   }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() body: any) {
-    const product = await this.service.update(id, body);
+    const product = await this.service.update(parseInt(id), body);
     return { ok: true, product };
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    const deleted = await this.service.delete(id);
+    const deleted = await this.service.delete(parseInt(id));
     return { ok: true, deleted };
   }
 }

@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
-  Body,
-} from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Controller, Get, Post, Patch, Delete, Param, Body, } from '@nestjs/common'; import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -27,19 +18,19 @@ export class UsersController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const user = await this.service.findOne(id);
+    const user = await this.service.findOne(parseInt(id));
     return { ok: true, user };
   }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() body: any) {
-    const user = await this.service.update(id, body);
+    const user = await this.service.update(parseInt(id), body);
     return { ok: true, user };
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    await this.service.delete(id);
+    await this.service.delete(parseInt(id));
     return { ok: true };
   }
 
@@ -54,7 +45,7 @@ export class UsersController {
 
   @Post('me')
   async me(@Body() body: { id: string }) {
-    const user = await this.service.findOne(body.id);
+    const user = await this.service.findOne(parseInt(body.id));
     if (!user) return { ok: false, error: 'Usuário não encontrado' };
     return { ok: true, user };
   }

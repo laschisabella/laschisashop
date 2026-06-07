@@ -11,7 +11,6 @@ export default function DashboardPage() {
         <TabsList>
           <TabsTrigger value="products">Produtos</TabsTrigger>
           <TabsTrigger value="users">Usuários</TabsTrigger>
-          <TabsTrigger value="settings">Test</TabsTrigger>
         </TabsList>
 
         <TabsContent value="products">
@@ -20,10 +19,6 @@ export default function DashboardPage() {
 
         <TabsContent value="users">
           <UsersTable />
-        </TabsContent>
-
-        <TabsContent value="settings">
-          <div className="p-4 border rounded-md bg-gray-50">Test</div>
         </TabsContent>
       </Tabs>
     </div>

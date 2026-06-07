@@ -7,7 +7,7 @@ export const UsersService = {
     return res.data.list;
   },
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: number): Promise<User> {
     const res = await api.get(`/users/${id}`);
     return res.data;
   },
@@ -17,12 +17,12 @@ export const UsersService = {
     return res.data;
   },
 
-  async update(id: string, payload: Partial<User>): Promise<User> {
+  async update(id: number, payload: Partial<User>): Promise<User> {
     const res = await api.patch(`/users/${id}`, payload);
     return res.data;
   },
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: number): Promise<boolean> {
     await api.delete(`/users/${id}`);
     return true;
   },
