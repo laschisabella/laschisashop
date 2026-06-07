@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { useUsers } from "@/hooks/useUsers";
 import { useCart } from "@/hooks/useCart";
@@ -24,7 +24,14 @@ export default function HomePage() {
     password: "",
   });
 
-  // TODOS os hooks devem ficar antes de qualquer return
+  useEffect(() => {
+    const savedUser = localStorage.getItem("authUser");
+
+    if (savedUser) {
+      setAuthUser(JSON.parse(savedUser));
+    }
+  }, []);
+
   const { items, addItem } = useCart(authUser?.id);
 
   if (list.isLoading || userList.isLoading) {
@@ -35,30 +42,28 @@ export default function HomePage() {
     return <p>Nenhum produto encontrado</p>;
   }
 
-  const activeProducts = list.data.filter(
-    (product: Product) => product.active,
-  );
+  const activeProducts = list.data.filter((product: Product) => product.active);
 
   const handleLogin = () => {
     const user = userList.data?.find(
       (u: any) =>
-        u.username === loginForm.username &&
-        u.password === loginForm.password,
+        u.username === loginForm.username && u.password === loginForm.password,
     );
 
     if (user) {
       setAuthUser(user);
+      localStorage.setItem("authUser", JSON.stringify(user));
 
       setEditForm({
         email: user.email,
         password: user.password,
       });
-    } else {
-      alert("Usuário ou senha inválidos");
     }
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("authUser");
+
     setAuthUser(null);
 
     setLoginForm({
@@ -113,10 +118,7 @@ export default function HomePage() {
         onUpdateProfile={handleUpdateProfile}
       />
 
-      <ProductGrid
-        products={activeProducts}
-        onAddToCart={handleAddToCart}
-      />
+      <ProductGrid products={activeProducts} onAddToCart={handleAddToCart} />
     </div>
   );
 }

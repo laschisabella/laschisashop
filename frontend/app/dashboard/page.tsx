@@ -3,6 +3,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import ProductsTable from "./ProductsTable";
 import UsersTable from "./UsersTable";
+import OrdersTable from "./OrdersTable";
 
 export default function DashboardPage() {
   return (
@@ -11,6 +12,7 @@ export default function DashboardPage() {
         <TabsList>
           <TabsTrigger value="products">Produtos</TabsTrigger>
           <TabsTrigger value="users">Usuários</TabsTrigger>
+          <TabsTrigger value="orders">Pedidos</TabsTrigger>
         </TabsList>
 
         <TabsContent value="products">
@@ -19,6 +21,10 @@ export default function DashboardPage() {
 
         <TabsContent value="users">
           <UsersTable />
+        </TabsContent>
+
+        <TabsContent value="orders">
+          <OrdersTable />
         </TabsContent>
       </Tabs>
     </div>
